@@ -53,18 +53,16 @@ const STACK = [
                 data-stack-tile
                 data-name={tool.name}
                 >
-                    <div>
-                        {/* black icons are inverted so they show on the dark tile, before and after hover */}
-                        <img
-                            src={tool.icon}
-                            alt={tool.name}
-                            class:list={[
-                                "opacity-80 brightness-150 grayscale transition duration-300",
-                                "group-hover:scale-125 group-hover:opacity-100 group-hover:brightness-100 group-hover:grayscale-0",
-                                { invert: tool.black },
-                            ]}
-                        >
-                    </div>
+                    {/* black icons are inverted so they show on the dark tile, before and after hover */}
+                    <img
+                        src={tool.icon}
+                        alt={tool.name}
+                        class:list={[
+                            "opacity-80 brightness-150 grayscale transition duration-300",
+                            "group-hover:scale-125 group-hover:opacity-100 group-hover:brightness-100 group-hover:grayscale-0",
+                            { invert: tool.black },
+                        ]}
+                    >
                 </div>
             ))
         }
@@ -251,14 +249,7 @@ const STACK = [
             const floorLeft = Math.min(lineRect.left - rootRect.left, 0);
             const floorRight = Math.max(lineRect.right - rootRect.left, width);
 
-            engine = Engine.create({
-                // No sleeping: a tile balanced on a corner moves very slowly at first and would be
-                // frozen in place before it gets the chance to topple.
-                enableSleeping: false,
-                positionIterations: 20,
-                velocityIterations: 16,
-            });
-            engine.gravity.y = 1;
+            engine = Engine.create({ positionIterations: 20, velocityIterations: 16 });
 
             const solid = { isStatic: true, friction: 0.9, frictionStatic: 1, restitution: 0 };
             Composite.add(engine.world, [
