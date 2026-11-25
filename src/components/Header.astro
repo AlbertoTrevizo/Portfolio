@@ -34,23 +34,11 @@ backdrop-blur-md bg-black/30 z-[60] border-b border-gray-600"
 		indicator.style.opacity = '1';
 	}
 
-	const observedSections = ['about', 'experience', 'projects', 'stack']
-		.map((id) => document.getElementById(id))
-		.filter((el): el is HTMLElement => el !== null);
-
-	if (observedSections.length) {
-		const observer = new IntersectionObserver(
-			(entries) => {
-				entries.forEach((entry) => {
-					if (entry.isIntersecting) {
-						setActive(entry.target.id);
-					}
-				});
-			},
-			{ rootMargin: '-45% 0px -45% 0px', threshold: 0 }
-		);
-		observedSections.forEach((section) => observer.observe(section));
-	}
+	const observer = new IntersectionObserver(
+		(entries) => entries.forEach((entry) => entry.isIntersecting && setActive(entry.target.id)),
+		{ rootMargin: '-45% 0px -45% 0px' }
+	);
+	document.querySelectorAll('main > section').forEach((section) => observer.observe(section));
 </script>
 
 <style>
