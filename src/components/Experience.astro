@@ -1,5 +1,4 @@
 ---
-import ExperienceItem from "./ExperienceItem.astro"
 import Vinyl from "./Vinyl.astro"
 
 const EXPERIENCIE = [
@@ -73,8 +72,28 @@ const EXPERIENCIE = [
 		<div class="flex h-full flex-1 items-center justify-center pl-[9%]">
 			<div class="playlist relative z-10 h-[26rem] w-full max-w-xl md:h-[30rem]" data-playlist>
 				<ol class="relative h-full">
-					{EXPERIENCIE.map((experience, i) => (
-						<ExperienceItem {...experience} index={i + 1} />
+					{EXPERIENCIE.map(({ title, company, date, descriptions }, i) => (
+						<li class="track group absolute inset-x-0 top-1/2" data-track>
+							<div class="border-b border-white/10 pb-6">
+								<button type="button" class="flex w-full items-baseline justify-between gap-6 text-left" data-track-trigger>
+									<span class="flex items-baseline gap-4">
+										<span class="font-mono text-sm text-gray-500">{String(i + 1).padStart(2, '0')}</span>
+										<span class="text-2xl font-semibold text-white md:text-3xl">{title} at {company}</span>
+									</span>
+									<span class="track-toggle shrink-0 font-mono text-xl text-gray-500">+</span>
+								</button>
+
+								<p class="mt-1 pl-9 text-sm text-gray-400">{date}</p>
+
+								<div class="track-panel">
+									<ul class="overflow-hidden pl-9">
+										{descriptions.map((description) => (
+											<li class="ml-4 mt-4 list-disc text-pretty text-sm text-gray-300">{description}</li>
+										))}
+									</ul>
+								</div>
+							</div>
+						</li>
 					))}
 				</ol>
 			</div>
@@ -228,15 +247,11 @@ const EXPERIENCIE = [
 				needleArm.style.transform = `rotate(${42 - progress * 8}deg)`;
 			}
 
-			let playlistOpacity = 0;
-			if (progress >= PLAYLIST_IN_START && progress < PLAYLIST_IN_END) {
-				playlistOpacity = (progress - PLAYLIST_IN_START) / (PLAYLIST_IN_END - PLAYLIST_IN_START);
-			} else if (progress >= PLAYLIST_IN_END && progress < PLAYLIST_OUT_START) {
-				playlistOpacity = 1;
-			} else if (progress >= PLAYLIST_OUT_START && progress < PLAYLIST_OUT_END) {
-				playlistOpacity = 1 - (progress - PLAYLIST_OUT_START) / (PLAYLIST_OUT_END - PLAYLIST_OUT_START);
-			}
-			playlistOpacity = Math.min(Math.max(playlistOpacity, 0), 1);
+			// Fade-in ramp and fade-out ramp; the smaller one wins, clamped to [0, 1].
+			const playlistOpacity = Math.min(Math.max(Math.min(
+				(progress - PLAYLIST_IN_START) / (PLAYLIST_IN_END - PLAYLIST_IN_START),
+				(PLAYLIST_OUT_END - progress) / (PLAYLIST_OUT_END - PLAYLIST_OUT_START),
+			), 0), 1);
 			playlist!.style.opacity = String(playlistOpacity);
 			playlist!.style.pointerEvents = playlistOpacity > 0.5 ? 'auto' : 'none';
 
@@ -277,8 +292,6 @@ const EXPERIENCIE = [
 		window.addEventListener('load', onResize);
 		render();
 	} else {
-		vinylReveal?.style.setProperty('transform', 'none');
-		vinylReveal?.style.setProperty('opacity', '1');
 		playlist?.style.setProperty('opacity', '1');
 		tracks.forEach((track, i) => {
 			track.style.transform = `translateY(calc(-50% + ${(i - (tracks.length - 1) / 2) * 100}px))`;
@@ -292,3 +305,26 @@ const EXPERIENCIE = [
 		});
 	});
 </script>
+<style>
+	.track {
+		will-change: transform, opacity;
+	}
+
+	.track-panel {
+		display: grid;
+		grid-template-rows: 0fr;
+		transition: grid-template-rows 500ms ease;
+	}
+
+	.track.is-expanded .track-panel {
+		grid-template-rows: 1fr;
+	}
+
+	.track-toggle {
+		transition: transform 300ms ease;
+	}
+
+	.track.is-expanded .track-toggle {
+		transform: rotate(45deg);
+	}
+</style>
