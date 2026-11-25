@@ -21,11 +21,9 @@
 	const sphere = new THREE.Mesh(geometry, material);
 	scene.add(sphere);
 
-	const pointer = { x: 0, y: 0 };
-	const mouse = { x: 0, y: 0, active: false };
+	// Starts centered so the sphere doesn't tilt before the first move.
+	const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2, active: false };
 	window.addEventListener('pointermove', (event) => {
-		pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
-		pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
 		mouse.x = event.clientX;
 		mouse.y = event.clientY;
 		mouse.active = event.pointerType === 'mouse';
@@ -55,8 +53,8 @@
 		material.uniforms.uTime.value = (performance.now() - startTime) / 1000;
 
 		sphere.rotation.y += 0.0015;
-		sphere.rotation.x = THREE.MathUtils.lerp(sphere.rotation.x, pointer.y * 0.45, 0.05);
-		sphere.rotation.z = THREE.MathUtils.lerp(sphere.rotation.z, pointer.x * 0.45, 0.05);
+		sphere.rotation.x = THREE.MathUtils.lerp(sphere.rotation.x, (1 - (mouse.y / window.innerHeight) * 2) * 0.45, 0.05);
+		sphere.rotation.z = THREE.MathUtils.lerp(sphere.rotation.z, ((mouse.x / window.innerWidth) * 2 - 1) * 0.45, 0.05);
 
 		const rect = canvas.getBoundingClientRect();
 		ndc.set(((mouse.x - rect.left) / rect.width) * 2 - 1, -((mouse.y - rect.top) / rect.height) * 2 + 1);
