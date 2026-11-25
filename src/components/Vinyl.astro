@@ -6,11 +6,11 @@ interface Props {
 const { class: className } = Astro.props;
 ---
 
-<div class:list={['relative', className]} data-vinyl-outer>
+<div class:list={['relative', className]}>
 	<div class="vinyl-reveal h-full w-full" data-vinyl-reveal>
 		<canvas class="pointer-events-auto h-full w-full touch-pan-y select-none" data-vinyl-canvas></canvas>
 
-		<div class="vinyl-needle" data-needle>
+		<div class="vinyl-needle">
 			<span class="needle-base"></span>
 			<span class="needle-arm" data-needle-arm>
 				<span class="needle-head"></span>

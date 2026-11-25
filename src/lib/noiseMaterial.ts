@@ -15,7 +15,6 @@ export const createNoiseMaterial = () =>
 			uniform float uTime;
 			uniform vec3 uPointer;
 			uniform float uPointerStrength;
-			varying vec3 vNormal;
 			varying float vDisplacement;
 			varying vec2 vUv;
 
@@ -85,7 +84,6 @@ export const createNoiseMaterial = () =>
 			}
 
 			void main() {
-				vNormal = normal;
 				vUv = uv;
 				// Near the cursor the noise gets rougher and the surface swells toward it.
 				float influence = uPointerStrength * (1.0 - smoothstep(0.0, 1.1, distance(position, uPointer)));
@@ -96,7 +94,6 @@ export const createNoiseMaterial = () =>
 			}
 		`,
 		fragmentShader: `
-			varying vec3 vNormal;
 			varying float vDisplacement;
 			varying vec2 vUv;
 
