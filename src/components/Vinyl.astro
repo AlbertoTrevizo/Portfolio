@@ -115,7 +115,7 @@ const { class: className } = Astro.props;
 			dragging = true;
 			lastX = event.clientX;
 			// The hand pushes the edge it holds: dragging right on the top half turns the disc clockwise.
-			dragSign = hit.top ? -1 : 1;
+			dragSign = hit.top ? 1 : -1;
 			discRadius = hit.radius;
 			canvas.setPointerCapture(event.pointerId);
 			canvas.style.cursor = 'grabbing';
@@ -223,7 +223,7 @@ const { class: className } = Astro.props;
 				velocity = Math.abs(velocity) < 1e-4 ? 0 : velocity * 0.92; // momentum after release
 			}
 			scratchAngle += velocity;
-			disc.rotation.z = spinAngle + scratchAngle;
+			disc.rotation.z = -(spinAngle + scratchAngle); // negated: scrolling down turns it clockwise
 			updateAudio(velocity);
 
 			// The disc scrolls the page (half a turn = one track), so the playlist and the scroll
